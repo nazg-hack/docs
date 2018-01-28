@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 
 /**
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -14,7 +14,18 @@
  *
  * Copyright (c) 2017-2018 Yuuki Takezawa
  */
-return [
-  'config_cache_enabled' => false,
-  'log_file' => __DIR__.'/../storages/logs/app.log',
-];
+final class :div:index extends :x:element {
+  attribute :div;
+
+  use XHPHelpers;
+
+  protected function render(): XHPRoot {
+    $id = $this->getID();
+    return (
+            <div id={$id}>
+              <h1>Nazg</h1>
+              Begin developing HHVM/Hack Http Application / {phpversion()}
+            </div>
+    );
+  }
+}

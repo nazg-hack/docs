@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 
 /**
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -14,7 +14,20 @@
  *
  * Copyright (c) 2017-2018 Yuuki Takezawa
  */
-return [
-  'config_cache_enabled' => false,
-  'log_file' => __DIR__.'/../storages/logs/app.log',
-];
+namespace App\Module;
+
+use App\Validation;
+use Ytake\HHContainer\Scope;
+use Ytake\HHContainer\ServiceModule;
+use Ytake\HHContainer\FactoryContainer;
+
+final class ValidationServiceModule extends ServiceModule {
+  <<__Override>>
+  public function provide(FactoryContainer $container): void {
+    $container->set(
+      Validation\ContentRequestValidator::class,
+      $container ==> new Validation\ContentRequestValidator(),
+      Scope::SINGLETON,
+    );
+  }
+}

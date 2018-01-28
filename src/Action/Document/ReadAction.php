@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 
 /**
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -14,36 +14,24 @@
  *
  * Copyright (c) 2017-2018 Yuuki Takezawa
  */
-namespace App\Responder;
+namespace App\Action\Document;
 
+use App\Validation\ContentRequestValidator;
+use App\Responder\IndexResponder;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response\HtmlResponse;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-final class IndexResponder {
+final class ReadAction implements MiddlewareInterface {
 
-  public function response(): ResponseInterface {
-    return new HtmlResponse($this->welcome()->toString());
-  }
-
-  protected function welcome(): \xhp_html {
-    return $this->layout();
-  }
-
-  protected function layout(): \xhp_html {
-    return
-      <html>
-        <head>
-          <meta charset="utf-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1"
-          />
-          <title>Nazg</title>
-        </head>
-        <body>
-          <div:index />
-        </body>
-      </html>;
+  public function __construct(private IndexResponder $responder) {}
+  
+  <<RequestValidation(ContentRequestValidator::class)>>
+  public function process(
+    ServerRequestInterface $request,
+    RequestHandlerInterface $handler,
+  ): ResponseInterface {
+    return $this->responder->response();
   }
 }
