@@ -1,6 +1,6 @@
 {
-  "name": "nazg/skeleton",
-  "description": "PSR-7, PSR-11, PSR-15 compliant Action-Domain-Responder (ADR) Micro framework for HHVM/Hack",
+  "name": "nazg/docs",
+  "description": "",
   "type": "project",
   "keywords": [
     "hhvm",
@@ -29,7 +29,7 @@
     "hhvm": ">=3.24",
     "hhvm/hhvm-autoload": "^1.5",
     "hhvm/type-assert": "^3.2.0",
-    "nazg/framework": "^0.2.2",
+    "nazg/framework": "^0.2.3",
     "facebook/xhp-lib": "~2.2",
     "zendframework/zend-diactoros": "^1.7.0",
     "facebook/fbmarkdown": "^0.1"

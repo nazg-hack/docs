@@ -17,10 +17,13 @@
 namespace App\Module;
 
 use App\Action;
+use App\Assert\AssertArray;
+use App\Finder\DocumentFinder;
 use App\Responder\IndexResponder;
 use Ytake\HHContainer\Scope;
 use Ytake\HHContainer\ServiceModule;
 use Ytake\HHContainer\FactoryContainer;
+use Nazg\Foundation\Service;
 
 final class ActionServiceModule extends ServiceModule {
   <<__Override>>
@@ -32,8 +35,14 @@ final class ActionServiceModule extends ServiceModule {
     );
     $container->set(
       Action\Document\ReadAction::class,
-      $container ==> new Action\Document\ReadAction(new IndexResponder()),
+      $container ==> new Action\Document\ReadAction(),
       Scope::PROTOTYPE,
+    );
+    $container->set(
+      \App\Finder\DocumentFinder::class,
+      $container ==> AssertArray::assert($container->get(Service::CONFIG))
+      |>new \App\Finder\DocumentFinder(strval($$['doc_path'])),
+      Scope::SINGLETON,
     );
   }
 }

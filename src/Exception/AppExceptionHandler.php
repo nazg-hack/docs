@@ -14,22 +14,28 @@
  *
  * Copyright (c) 2017-2018 Yuuki Takezawa
  */
-namespace App\Action\Document;
+namespace App\Exception;
 
-use App\Validation\ContentRequestValidator;
-use App\Responder\IndexResponder;
+use Nazg\Http\StatusCode;
+use Nazg\Foundation\Validation\ValidationException;
+use Nazg\Types\ExceptionImmMap;
+use Nazg\Foundation\Exception\ExceptionHandler;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Diactoros\Response\JsonResponse;
 
-final class ReadAction implements MiddlewareInterface {
-
-  <<RequestValidation(ContentRequestValidator::class)>>
-  public function process(
-    ServerRequestInterface $request,
-    RequestHandlerInterface $handler,
+class AppExceptionHandler extends ExceptionHandler {
+  <<__Override>>
+  protected function render(
+    ExceptionImmMap $em,
+    \Exception $e
   ): ResponseInterface {
-    // 
+    $message = $em->toArray();
+    if($e instanceof ValidationException) {
+      $message = $e->errors();
+    }
+    return new JsonResponse(
+      $message,
+      StatusCode::StatusInternalServerError,
+    );
   }
 }

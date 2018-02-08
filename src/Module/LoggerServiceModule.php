@@ -23,6 +23,7 @@ use Nazg\Log\LogServiceModule;
 use Psr\Log\LoggerInterface;
 use Monolog\Logger;
 use Monolog\Monolog;
+use Monolog\Handler\StreamHandler;
 
 final class LoggerServiceModule extends LogServiceModule {
 
@@ -38,7 +39,7 @@ final class LoggerServiceModule extends LogServiceModule {
   }
 
   protected function filesystemLogger(mixed $config): LoggerInterface {
-    $monolog = new Logger("Nazg.Log");
+    $monolog = new Logger("nazg.doc");
     if (is_array($config)) {
       $monolog->pushHandler(
         new StreamHandler($config['log_file'], Logger::WARNING),

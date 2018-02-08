@@ -16,7 +16,7 @@
  */
 namespace App\Module;
 
-use App\Exception\ApplicationExceptionHandler;
+use App\Exception\AppExceptionHandler;
 use Ytake\HHContainer\Scope;
 use Ytake\HHContainer\ServiceModule;
 use Ytake\HHContainer\FactoryContainer;
@@ -32,7 +32,7 @@ final class ExceptionServiceModule extends NazgExceptionServiceModule {
   public function provide(FactoryContainer $container): void {
     $container->set(
       ExceptionHandleInterface::class,
-      $container ==> new ApplicationExceptionHandler(new Emitter()),
+      $container ==> new AppExceptionHandler(new Emitter()),
     );
     $container->set(
       ExceptionRegister::class,
@@ -40,16 +40,5 @@ final class ExceptionServiceModule extends NazgExceptionServiceModule {
         $this->invariantExceptionHandler($container),
       ),
     );
-  }
-
-  private function invariantExceptionHandler(
-    FactoryContainer $container,
-  ): ExceptionHandleInterface {
-    $instance = $container->get(ExceptionHandleInterface::class);
-    invariant(
-      $instance instanceof ExceptionHandleInterface,
-      "Interface '\Nazg\Exceptions\ExceptionHandleInterface' is not implemented by this class",
-    );
-    return $instance;
   }
 }
