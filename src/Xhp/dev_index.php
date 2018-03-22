@@ -24,8 +24,18 @@ final class :div:index extends :x:element {
     return (
             <div id={$id}>
               <h1>Nazg</h1>
-              Begin developing HHVM/Hack Http Application / {phpversion()}
+              Begin developing HHVM/Hack Http Application
             </div>
     );
+  }
+}
+
+class UnsafeXHP implements XHPUnsafeRenderable {
+  public function __construct(
+    private string $html,
+  ) {}
+
+  public function toHTMLString(): string {
+    return $this->html;
   }
 }

@@ -45,8 +45,10 @@ return [
      * }      
      */
     \Nazg\Http\HttpMethod::GET => ImmMap {
-      '/' => ImmVector {App\Action\IndexAction::class},
-      '/contents/{content}' => ImmVector {
+      '/' => ImmVector {
+        App\Action\IndexAction::class
+      },
+      '/{content}' => ImmVector {
         App\Action\Document\ReadAction::class
       },
     },

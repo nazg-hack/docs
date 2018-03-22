@@ -2,7 +2,7 @@
 
 namespace App\Assert;
 
-class AssertArray {
+final class AssertArray extends AbstractAssert {
   const type T = array<mixed, mixed>;
 
   public static function assert<T>(T $t): this::T  {

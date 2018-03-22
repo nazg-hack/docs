@@ -20,6 +20,5 @@ return [
     \App\Module\ExceptionServiceModule::class,
     \App\Module\MiddlewareServiceModule::class,
     \App\Module\LoggerServiceModule::class,
-    \App\Module\ValidationServiceModule::class,
   },
 ];

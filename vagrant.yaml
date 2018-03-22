@@ -10,6 +10,7 @@ folders:
     -
         map: ./
         to: /home/vagrant/docs
+        nfs: true
 sites:
     -
         map: nazg-doc.vagrant

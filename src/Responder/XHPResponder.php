@@ -19,17 +19,13 @@ namespace App\Responder;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
-final class IndexResponder {
+final class XHPResponder {
 
-  public function response(): ResponseInterface {
-    return new HtmlResponse($this->welcome()->toString());
+  public function response(string $content): ResponseInterface {
+    return new HtmlResponse($this->page($content)->toString());
   }
 
-  protected function welcome(): \xhp_html {
-    return $this->layout();
-  }
-
-  protected function layout(): \xhp_html {
+  protected function page(string $content): \xhp_html {
     return
       <html>
         <head>
@@ -39,10 +35,11 @@ final class IndexResponder {
             name="viewport"
             content="width=device-width, initial-scale=1"
           />
-          <title>Nazg</title>
+          <title>Nazg Documentation</title>
         </head>
         <body>
           <div:index />
+          {new \UnsafeXHP($content)}
         </body>
       </html>;
   }

@@ -17,9 +17,9 @@
 namespace App\Module;
 
 use App\Action;
-use App\Assert\AssertArray;
+use App\Assert\{AssertArray, AssertDocumentFinder};
 use App\Finder\DocumentFinder;
-use App\Responder\IndexResponder;
+use App\Responder\XHPResponder;
 use Ytake\HHContainer\Scope;
 use Ytake\HHContainer\ServiceModule;
 use Ytake\HHContainer\FactoryContainer;
@@ -30,12 +30,18 @@ final class ActionServiceModule extends ServiceModule {
   public function provide(FactoryContainer $container): void {
     $container->set(
       Action\IndexAction::class,
-      $container ==> new Action\IndexAction(new IndexResponder()),
+      $container ==> new Action\IndexAction(
+        new XHPResponder(),
+        AssertDocumentFinder::assert($container->get(DocumentFinder::class)),
+      ),
       Scope::PROTOTYPE,
     );
     $container->set(
       Action\Document\ReadAction::class,
-      $container ==> new Action\Document\ReadAction(),
+      $container ==> new Action\Document\ReadAction(
+        new XHPResponder(),
+        AssertDocumentFinder::assert($container->get(DocumentFinder::class)),
+      ),
       Scope::PROTOTYPE,
     );
     $container->set(
