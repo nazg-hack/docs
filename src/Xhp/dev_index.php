@@ -14,28 +14,28 @@
  *
  * Copyright (c) 2017-2018 Yuuki Takezawa
  */
-namespace App\Action;
+final class :div:index extends :x:element {
+  attribute :div;
 
-use App\Responder\XHPResponder;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use App\Finder\DocumentFinder;
+  use XHPHelpers;
 
-final class IndexAction implements MiddlewareInterface {
+  protected function render(): XHPRoot {
+    $id = $this->getID();
+    return (
+            <div id={$id}>
+              <h1>Nazg</h1>
+              Begin developing HHVM/Hack Http Application
+            </div>
+    );
+  }
+}
 
+class UnsafeXHP implements XHPUnsafeRenderable {
   public function __construct(
-    private XHPResponder $responder,
-    private DocumentFinder $finder
+    private string $html,
   ) {}
 
-  public function process(
-    ServerRequestInterface $request,
-    RequestHandlerInterface $handler,
-  ): ResponseInterface {
-    return $this->responder->response(
-      $this->finder->readMarkdown("index.md")
-    );
+  public function toHTMLString(): string {
+    return $this->html;
   }
 }

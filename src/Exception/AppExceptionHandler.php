@@ -1,4 +1,4 @@
-<?hh // strict
+<?hh 
 
 /**
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -14,28 +14,28 @@
  *
  * Copyright (c) 2017-2018 Yuuki Takezawa
  */
-namespace App\Action;
+namespace App\Exception;
 
-use App\Responder\XHPResponder;
+use Nazg\Http\StatusCode;
+use Nazg\Foundation\Validation\ValidationException;
+use Nazg\Types\ExceptionImmMap;
+use Nazg\Foundation\Exception\ExceptionHandler;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use App\Finder\DocumentFinder;
+use Zend\Diactoros\Response\JsonResponse;
 
-final class IndexAction implements MiddlewareInterface {
-
-  public function __construct(
-    private XHPResponder $responder,
-    private DocumentFinder $finder
-  ) {}
-
-  public function process(
-    ServerRequestInterface $request,
-    RequestHandlerInterface $handler,
+class AppExceptionHandler extends ExceptionHandler {
+  <<__Override>>
+  protected function render(
+    ExceptionImmMap $em,
+    \Exception $e
   ): ResponseInterface {
-    return $this->responder->response(
-      $this->finder->readMarkdown("index.md")
+    $message = $em->toArray();
+    if($e instanceof ValidationException) {
+      $message = $e->errors();
+    }
+    return new JsonResponse(
+      $message,
+      StatusCode::StatusInternalServerError,
     );
   }
 }

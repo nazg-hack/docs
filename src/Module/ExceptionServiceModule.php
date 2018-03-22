@@ -16,39 +16,29 @@
  */
 namespace App\Module;
 
-use App\Action;
-use App\Assert\{AssertArray, AssertDocumentFinder};
-use App\Finder\DocumentFinder;
-use App\Responder\XHPResponder;
+use App\Exception\AppExceptionHandler;
 use Ytake\HHContainer\Scope;
 use Ytake\HHContainer\ServiceModule;
 use Ytake\HHContainer\FactoryContainer;
-use Nazg\Foundation\Service;
+use Nazg\Response\Emitter;
+use Nazg\Exceptions\ExceptionHandleInterface;
+use Nazg\Foundation\Exception\ExceptionRegister;
+use
+  Nazg\Foundation\Exception\ExceptionServiceModule as NazgExceptionServiceModule
+;
 
-final class ActionServiceModule extends ServiceModule {
+final class ExceptionServiceModule extends NazgExceptionServiceModule {
   <<__Override>>
   public function provide(FactoryContainer $container): void {
     $container->set(
-      Action\IndexAction::class,
-      $container ==> new Action\IndexAction(
-        new XHPResponder(),
-        AssertDocumentFinder::assert($container->get(DocumentFinder::class)),
-      ),
-      Scope::PROTOTYPE,
+      ExceptionHandleInterface::class,
+      $container ==> new AppExceptionHandler(new Emitter()),
     );
     $container->set(
-      Action\Document\ReadAction::class,
-      $container ==> new Action\Document\ReadAction(
-        new XHPResponder(),
-        AssertDocumentFinder::assert($container->get(DocumentFinder::class)),
+      ExceptionRegister::class,
+      $container ==> new ExceptionRegister(
+        $this->invariantExceptionHandler($container),
       ),
-      Scope::PROTOTYPE,
-    );
-    $container->set(
-      \App\Finder\DocumentFinder::class,
-      $container ==> AssertArray::assert($container->get(Service::CONFIG))
-      |>new \App\Finder\DocumentFinder(strval($$['doc_path'])),
-      Scope::SINGLETON,
     );
   }
 }

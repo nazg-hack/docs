@@ -14,8 +14,9 @@
  *
  * Copyright (c) 2017-2018 Yuuki Takezawa
  */
-namespace App\Action;
+namespace App\Action\Document;
 
+use App\Validation\ContentRequestValidator;
 use App\Responder\XHPResponder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,19 +24,22 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use App\Finder\DocumentFinder;
 
-final class IndexAction implements MiddlewareInterface {
+final class ReadAction implements MiddlewareInterface {
 
   public function __construct(
     private XHPResponder $responder,
     private DocumentFinder $finder
   ) {}
-
+  
   public function process(
     ServerRequestInterface $request,
     RequestHandlerInterface $handler,
   ): ResponseInterface {
+    // 
     return $this->responder->response(
-      $this->finder->readMarkdown("index.md")
+      $this->finder->readMarkdown(
+        strval($request->getAttribute('content'))
+      )
     );
   }
 }
