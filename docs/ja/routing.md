@@ -87,6 +87,8 @@ Actionクラスは　**Psr\Http\Server\MiddlewareInterface** を実装したク�
 
 ### Hello World Action Class
 
+ここからはHello Worldを返却するActionクラスを実装します。  
+
 レスポンスは [zendframework/zend-diactoros](https://github.com/zendframework/zend-diactoros) の  
 **Zend\Diactoros\Response\HtmlResponseクラス** を利用して実装してみましょう。
 
@@ -98,15 +100,70 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Diactoros\Response\HtmlResponse;
 
 final class HelloAction implements MiddlewareInterface {
-
 
   public function process(
     ServerRequestInterface $request,
     RequestHandlerInterface $handler,
   ): ResponseInterface {
-    return $this->responder->response();
+    return new HtmlResponse('Hello World');
   }
 }
 ```
+
+processメソッドで **Zend\Diactoros\Response\HtmlResponse** インスタンスを返却します。  
+このActionクラスはHTMLでHello Worldを返却する、という動作になります。  
+
+### Register Container
+
+Actionクラスを作成しただけではフレームワークで利用することができません。  
+デフォルトで用意されている **App\Module\ActionServiceModuleクラス** に、  
+このActionクラスのインスタンス生成方法を記述します。  
+*ServiceModuleクラスは役割ごとに作成したり、アプリケーションの整理で任意で作成したり自由に利用できます*  
+
+```hack
+namespace App\Module;
+
+use App\Action\{IndexAction, HelloAction};
+use App\Responder\IndexResponder;
+use Ytake\HHContainer\Scope;
+use Ytake\HHContainer\ServiceModule;
+use Ytake\HHContainer\FactoryContainer;
+
+final class ActionServiceModule extends ServiceModule {
+  <<__Override>>
+  public function provide(FactoryContainer $container): void {
+    $container->set(
+      IndexAction::class,
+      $container ==> new IndexAction(new IndexResponder()),
+      Scope::PROTOTYPE,
+    );
+    $container->set(
+      HelloAction::class,
+      $container ==> new HelloAction(),
+      Scope::PROTOTYPE,
+    );
+  }
+}
+
+```
+
+次にルーティングを追加します。  
+デフォルトで用意されている `config/routes.global.php` に追記します。
+
+```hack
+return [
+  \Nazg\Foundation\Service::ROUTES => ImmMap {
+    \Nazg\Http\HttpMethod::GET => ImmMap {
+      '/' => ImmVector {App\Action\IndexAction::class},
+      '/hello' => ImmVector {App\Action\HelloAction::class},
+    },
+  },
+];
+
+```
+
+これで `/hello` にアクセスすると、Hello Worldが表示されます。  
+
