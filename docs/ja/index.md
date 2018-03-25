@@ -13,7 +13,7 @@ Web APIや小規模なWeb開発向けフレームワークで、[ADR](http://pau
 
 ## Nazg Frameworkの機能を理解する
 
- - ルーティング
+ - [ルーティング](routing.md)
  - [DI Container / hh-container](using-di-container.md)
  - バリデーション
  - CORSミドルウェア
