@@ -190,5 +190,79 @@ final class AppServiceModule extends ServiceModule {
 第二引数には、第一引数で指定した文字列(サービス)の引数名を指定します。  
 第三引数には、無名関数で引数は 、 **\Ytake\HHContainer\FactoryContainerクラス** 自身となります。  
 無名関数、またはラムダで記述します。
+
 すでに登録済みのサービスを取得するなどで依存関係を解決することができます。  
+
+以下にその例を示します。
+
+#### Dependency Injection with parameters
+
+```hack
+
+final class MessageClass {
+  public function __construct(protected string $message) {
+  }
+  public function message(): string {
+    return $this->message;
+  }
+}
+
+final class MessageClient {
+  public function __construct(protected MessageClass $message) {
+
+  }
+  public function message(): MessageClass {
+    return $this->message;
+  }
+}
+
+```
+
+MessageClientクラスはインスタンス生成に MessageClassを必要としています。  
+MessageClassはインスタンス生成に文字列を必要としています。  
+これを指定する場合は次の通りです。 
+
+```hack
+namespace App\Module;
+
+use Ytake\HHContainer\Scope;
+use Ytake\HHContainer\ServiceModule;
+use Ytake\HHContainer\FactoryContainer;
+
+final class AppServiceModule extends ServiceModule {
+
+  <<__Override>>
+  public function provide(FactoryContainer $container): void {
+    $container->set(
+      'message.class', 
+      $container ==> new MessageClass('testing')
+    );
+    $container->parameters(
+      MessageClient::class, 
+      'message', 
+      $container ==> $container->get('message.class')
+    );
+  }
+}
+
+```
+
+上記の記述で、`$container->get(MessageClient::class)` をコールした場合に  
+任意の引数でインスタンスが生成されます。  
+
+場合によっては下記の様に記述しても構いません。  
+
+```hack
+
+<<__Override>>
+public function provide(FactoryContainer $container): void {
+  $container->set(
+    MessageClient::class, 
+    $container ==> new MessageClient(new MessageClass('testing'))
+  );
+}
+```
+
+引数に必要なインスタンスなどをDIコンテナから取得したい場合、  
+複雑な依存解決を記述する場合などに利用できます。  
 
